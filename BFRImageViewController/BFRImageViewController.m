@@ -32,6 +32,8 @@
 /*! This will determine whether to change certain behaviors for 3D touch considerations based on its value. */
 @property (nonatomic, getter=isBeingUsedFor3DTouch) BOOL usedFor3DTouch;
 
+@property (nonatomic, assign) BOOL dragToDismiss;
+
 /*! This is used for nothing more than to defer the hiding of the status bar until the view appears to avoid any awkward jumps in the presenting view. */
 @property (nonatomic, getter=shouldHideStatusBar) BOOL hideStatusBar;
 
@@ -50,6 +52,7 @@
     if (self) {
         NSAssert(images.count > 0, @"You must supply at least one image source to use this class.");
         self.images = images;
+        self.dragToDismiss = YES;
         [self commonInit];
     }
     
@@ -63,6 +66,21 @@
         NSAssert(images.count > 0, @"You must supply at least one image source to use this class.");
         self.images = images;
         self.usedFor3DTouch = YES;
+        self.dragToDismiss = YES;
+        [self commonInit];
+    }
+    
+    return self;
+}
+
+- (instancetype)initWithImageSource:(NSArray *)images andDragToDismiss:(bool)dragToDismiss {
+    self = [super init];
+    
+    if (self) {
+        NSAssert(images.count > 0, @"You must supply at least one image source to use this class.");
+        self.images = images;
+        self.usedFor3DTouch = YES;
+        self.dragToDismiss = dragToDismiss;
         [self commonInit];
     }
     
@@ -187,6 +205,7 @@
         imgVC.disableHorizontalDrag = (self.images.count > 1);
         imgVC.disableAutoplayForLivePhoto = self.shouldDisableAutoplayForLivePhoto;
         imgVC.imageMaxScale = self.maxScale;
+        imgVC.dragToDismiss = self.dragToDismiss;
         [self.imageViewControllers addObject:imgVC];
     }
     

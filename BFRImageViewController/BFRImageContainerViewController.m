@@ -223,11 +223,13 @@
     [singleImgTap requireGestureRecognizerToFail:doubleImgTap];
     
     // Dragging to dismiss
-    UIPanGestureRecognizer *panImg = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleDrag:)];
-    if (self.shouldDisableHorizontalDrag) {
-        panImg.delegate = self;
+    if (self.dragToDismiss) {
+        UIPanGestureRecognizer *panImg = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleDrag:)];
+        if (self.shouldDisableHorizontalDrag) {
+            panImg.delegate = self;
+        }
+        [resizableImageView addGestureRecognizer:panImg];
     }
-    [resizableImageView addGestureRecognizer:panImg];
     
     if (self.assetType == BFRImageAssetTypeLivePhoto) {
         self.livePhotoImgView = (PHLivePhotoView *)resizableImageView;
@@ -346,7 +348,6 @@
 #pragma mark - Dragging and Long Press Methods
 /*! This method has three different states due to the gesture recognizer. In them, we either add the required behaviors using UIDynamics, update the image's position based off of the touch points of the drag, or if it's ended we snap it back to the center or dismiss this view controller if the vertical offset meets the requirements. */
 - (void)handleDrag:(UIPanGestureRecognizer *)recognizer {
-    
     if (recognizer.state == UIGestureRecognizerStateBegan) {
         [self.animator removeAllBehaviors];
         
